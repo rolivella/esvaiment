@@ -28,7 +28,7 @@ void setup() {
   //file.play();
   
   // Image load: 
-  img = loadImage("fotos/oldman.jpg");
+  img = loadImage("photo/oldman.jpg");
   image(img, 0, 0);
   
   //Generate random array numbers for positioning small squares:
