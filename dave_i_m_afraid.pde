@@ -15,10 +15,12 @@ int nn = n*n;
 Integer[] randoms = new Integer[nn];
 int[] eyeRects = { 234, 235, 259, 260, 261 };//Eyes squares defined by hand: 
 int counter = 0;
+int mediaCounter = 0;
 int fade = 0;
 boolean buttonPressed;
 int buttonX, buttonY, buttonW, buttonH;
 int state = 0;//state=0 intro screen, state=1 image screen
+boolean soundFileLoaded;
 
 void setup() {
   
@@ -28,7 +30,7 @@ void setup() {
   
   // Assume the button has not been pressed
   buttonPressed = false;
-  
+ 
   // Some basic parameters for a button
   buttonW = 100;
   buttonH = 40;
@@ -40,13 +42,30 @@ void setup() {
   for (int i = 1; i <= randoms.length; i++) randoms[i-1] = i; //<>//
   Collections.shuffle(Arrays.asList(randoms)); //<>//
   
+  //Load sound file: 
+  soundFileLoaded = false;  
+  thread("loadSoundFile");
+ 
 }
 
 void draw() { //<>//
   
+  if(!soundFileLoaded){
+   
+    // Loading text: 
+    fill(255);
+    rect(buttonX, buttonY, buttonW, buttonH);
+    fill(0);
+    textSize(25);
+    text("Loading", buttonX+10, buttonY+buttonH-10);
+    
+    
+  } else {
+  
+  
   if (buttonPressed) {
     state = 1;
-    if(counter == 0){
+    if(mediaCounter == 0){
       loadMedia();
     }
   } else {
@@ -79,15 +98,27 @@ void draw() { //<>//
     }
   }
   
+  }
+  
+}
+
+void loadSoundFile() {
+  println("Start loading sound:");
+  file = new SoundFile(this, "audio/i_am_afraid_dave.mp3");
+  println("end loading sound");
+  soundFileLoaded = true;
 }
 
 void loadMedia() {
+  
   // Image load: 
   img = loadImage("photo/oldman.jpg");
   image(img, 0, 0);
-  //Sound file: load and play
-  file = new SoundFile(this, "audio/i_am_afraid_dave.mp3");
+
+  
   file.play();
+  mediaCounter++;
+  println("End loading media");
 }
 
 void mousePressed() {
