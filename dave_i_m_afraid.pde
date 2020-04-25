@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import processing.sound.*;
 SoundFile file;
-
+float transparency = 0;
 PImage img;
 int n = 25;
 float w = 512;
@@ -17,113 +17,118 @@ int[] eyeRects = { 234, 235, 259, 260, 261 };//Eyes squares defined by hand:
 int counter = 0;
 int mediaCounter = 0;
 int fade = 0;
-boolean buttonPressed;
+boolean buttonStartPressed;
 int buttonX, buttonY, buttonW, buttonH;
-int state = 0;//state=0 intro screen, state=1 image screen
 boolean soundFileLoaded;
+boolean imageLoaded;
+boolean imageFadeinLoaded;
 
 void setup() {
   
-  //General variables:
+  // General variables:
   frameRate(500);
   size(512,512);
   
   // Assume the button has not been pressed
-  buttonPressed = false;
+  buttonStartPressed = false;
  
-  // Some basic parameters for a button
+  // Some basic parameters for the button:
   buttonW = 100;
   buttonH = 40;
   textSize(buttonH);
   buttonX = (width-buttonW)/2;
   buttonY = (height-buttonH)/2;
  
-  //Generate random array numbers for positioning small squares:
+  // Generate random array numbers for positioning small black squares:
   for (int i = 1; i <= randoms.length; i++) randoms[i-1] = i; //<>//
   Collections.shuffle(Arrays.asList(randoms)); //<>//
   
   //Load sound file: 
   soundFileLoaded = false;  
-  thread("loadSoundFile");
- 
+  thread("loadSoundFile");//diff thread to do not freeze program
+  
+  //Load photo file: 
+  imageLoaded = false;  
+  imageFadeinLoaded = false;
+  thread("loadImageFile");//diff thread to do not freeze program
+  
 }
 
 void draw() { //<>//
   
-  if(!soundFileLoaded){
+  if(!soundFileLoaded){//Sound file loading not yet finished
    
-    // Loading text: 
+    // "Loading" text: 
     fill(255);
     rect(buttonX, buttonY, buttonW, buttonH);
     fill(0);
     textSize(25);
     text("Loading", buttonX+10, buttonY+buttonH-10);
     
+  } else {//Sound file loading already finished
+  
+    if (buttonStartPressed) {//Start button already pressed
     
-  } else {
-  
-  
-  if (buttonPressed) {
-    state = 1;
-    if(mediaCounter == 0){
-      loadMedia();
-    }
-  } else {
-    state = 0;
-    // Intro text: 
-    String s = "The quick brown fox jumps over the lazy dog.";
-    fill(50);
-    textSize(10); 
-    text(s, 100, 50, 200, 200);  // Text wraps within text box
-    // Show the button
-    fill(255);
-    rect(buttonX, buttonY, buttonW, buttonH);
-    fill(0);
-    textSize(25);
-    text("START", buttonX+10, buttonY+buttonH-10);
-  }
-  
-  if (state == 1) {
-    if(fade <= 40){
-      boolean isEye = false;
-      for(int i = 0; i < eyeRects.length; i++){
-        if(randoms[counter] == eyeRects[i]) isEye= true;
+      if(!imageFadeinLoaded) {//Fade-in photo not finished
+        fadeIn();
+      } else { //Fade-in photo already finished
+        if(fade <= 40){
+          boolean isEye = false;
+          for(int i = 0; i < eyeRects.length; i++){
+            if(randoms[counter] == eyeRects[i]) isEye= true;
+          }
+          if (!isEye) drawRectangle(randoms[counter],false);
+          fade ++;
+        } else {
+          fade = 0;
+          counter++;
+          if(counter == nn) noLoop();
+        }
       }
-      if (!isEye) drawRectangle(randoms[counter],false);
-      fade ++;
-    } else {
-      fade = 0;
-      counter++;
-      if(counter == nn) noLoop();
+      
+    } else {//Start button not yet pressed
+    
+      // Intro text: 
+      String s = "This project bla bla bla...";
+      fill(50);
+      textSize(10); 
+      text(s, 100, 50, 200, 200);//Text wraps within text box
+      // Show the button
+      fill(255);
+      rect(buttonX, buttonY, buttonW, buttonH);
+      fill(0);
+      textSize(25);
+      text("START", buttonX+10, buttonY+buttonH-10);
     }
+
   }
   
-  }
-  
-}
+}//end draw
 
 void loadSoundFile() {
-  println("Start loading sound:");
   file = new SoundFile(this, "audio/i_am_afraid_dave.mp3");
-  println("end loading sound");
   soundFileLoaded = true;
 }
 
-void loadMedia() {
-  
-  // Image load: 
+void loadImageFile() {
   img = loadImage("photo/oldman.jpg");
-  image(img, 0, 0);
+  imageLoaded = true;
+}
 
-  
-  file.play();
-  mediaCounter++;
-  println("End loading media");
+void fadeIn() {//Fade-in photo   
+    background(0);
+    if (transparency < 255) { 
+      transparency += 0.75; 
+    } else {
+      imageFadeinLoaded = true;
+    }
+    tint(255, transparency);
+    image(img, 0, 0);
 }
 
 void mousePressed() {
   if (mouseX > buttonX && mouseX < buttonX+buttonW && mouseY > buttonY && mouseY < buttonY+buttonH)
-    buttonPressed = true;
+    buttonStartPressed = true;
 }
 
 void drawRectangle(int random, boolean showtext) {
