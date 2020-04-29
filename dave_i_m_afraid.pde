@@ -1,7 +1,8 @@
-import java.util.Arrays;
+import java.util.Arrays; //<>//
 import java.util.Collections;
-import processing.sound.*;
-SoundFile file;
+import processing.video.*;
+
+Movie videoSubtitles;
 float transparency = 0;
 PImage img;
 int n = 25;
@@ -19,45 +20,54 @@ int mediaCounter = 0;
 int fade = 0;
 boolean buttonStartPressed;
 int buttonX, buttonY, buttonW, buttonH;
-boolean soundFileLoaded;
-boolean imageLoaded;
-boolean imageFadeinLoaded;
+boolean photoLoaded;
+boolean photoFadeinLoaded;
+boolean videoFileLoaded;
+String videoName = "dave_i_m_afraid.mp4";
+String photoName = "photo/oldman.jpg";
+
+float offsetX = 450;//ox photo
+float offsetY = 50;//oy photo
+float oxvideo = 300;//ox video
+float oyvideo = 600;//oy video
+float widthVideo = 784;//width video
+float heightVideo = 112;//height video
 
 void setup() {
-  
+
   // General variables:
   frameRate(500);
-  size(512,512);
-  
-  // Assume the button has not been pressed
+  fullScreen();
+
+  // Assume start button has not been pressed
   buttonStartPressed = false;
- 
-  // Some basic parameters for the button:
+
+  // Some basic parameters for the start button:
   buttonW = 100;
   buttonH = 40;
   textSize(buttonH);
   buttonX = (width-buttonW)/2;
   buttonY = (height-buttonH)/2;
- 
+
   // Generate random array numbers for positioning small black squares:
-  for (int i = 1; i <= randoms.length; i++) randoms[i-1] = i; //<>//
-  Collections.shuffle(Arrays.asList(randoms)); //<>//
-  
-  //Load sound file: 
-  soundFileLoaded = false;  
-  thread("loadSoundFile");//diff thread to do not freeze program
-  
+  for (int i = 1; i <= randoms.length; i++) randoms[i-1] = i;
+  Collections.shuffle(Arrays.asList(randoms));
+
+  //Load movie: 
+  videoFileLoaded = false; 
+  thread("loadMovieFile");//diff thread to do not freeze program
+ 
   //Load photo file: 
-  imageLoaded = false;  
-  imageFadeinLoaded = false;
-  thread("loadImageFile");//diff thread to do not freeze program
+  photoLoaded = false;  
+  photoFadeinLoaded = false;
+  thread("loadPhotoFile");//diff thread to do not freeze program
   
 }
 
-void draw() { //<>//
-  
-  if(!soundFileLoaded){//Sound file loading not yet finished
-   
+void draw() {
+
+  if (!videoFileLoaded) {//Video file loading not yet finished
+
     // "Loading" text: 
     fill(255);
     rect(buttonX, buttonY, buttonW, buttonH);
@@ -65,29 +75,38 @@ void draw() { //<>//
     textSize(25);
     text("Loading", buttonX+10, buttonY+buttonH-10);
     
-  } else {//Sound file loading already finished
-  
+  } else {//Video file loading already finished
+
     if (buttonStartPressed) {//Start button already pressed
-    
-      if(!imageFadeinLoaded) {//Fade-in photo not finished
-        fadeIn();
+
+      if (!photoFadeinLoaded) {//Fade-in photo not finished
+      
+        fadeIn();//photo fade-in
+        
       } else { //Fade-in photo already finished
-        if(fade <= 40){
+      
+        //Play and locate video:
+        videoSubtitles.play();
+        image(videoSubtitles, oxvideo, oyvideo, widthVideo, heightVideo);
+
+        //Show small black rectangles: 
+        if (fade <= 40) {
           boolean isEye = false;
-          for(int i = 0; i < eyeRects.length; i++){
-            if(randoms[counter] == eyeRects[i]) isEye= true;
+          for (int i = 0; i < eyeRects.length; i++) {
+            if (randoms[counter] == eyeRects[i]) isEye= true;
           }
-          if (!isEye) drawRectangle(randoms[counter],false);
+          if (!isEye) drawRectangle(randoms[counter], false);
           fade ++;
         } else {
           fade = 0;
           counter++;
-          if(counter == nn) noLoop();
-        }
+          if (counter == nn) noLoop();
+        }//end small rectangles
+
       }
       
     } else {//Start button not yet pressed
-    
+
       // Intro text: 
       String s = "This project bla bla bla...";
       fill(50);
@@ -100,30 +119,28 @@ void draw() { //<>//
       textSize(25);
       text("START", buttonX+10, buttonY+buttonH-10);
     }
-
   }
-  
 }//end draw
 
-void loadSoundFile() {
-  file = new SoundFile(this, "audio/i_am_afraid_dave.mp3");
-  soundFileLoaded = true;
+void loadMovieFile() {
+  videoSubtitles = new Movie(this, videoName);
+  videoFileLoaded = true;
 }
 
-void loadImageFile() {
-  img = loadImage("photo/oldman.jpg");
-  imageLoaded = true;
+void loadPhotoFile() {
+  img = loadImage(photoName);
+  photoLoaded = true;
 }
 
 void fadeIn() {//Fade-in photo   
-    background(0);
-    if (transparency < 255) { 
-      transparency += 0.75; 
-    } else {
-      imageFadeinLoaded = true;
-    }
-    tint(255, transparency);
-    image(img, 0, 0);
+  background(0);
+  if (transparency < 255) { 
+    transparency += 10; //0.75
+  } else {
+    photoFadeinLoaded = true;
+  }
+  tint(255, transparency);
+  image(img, offsetX, offsetY);
 }
 
 void mousePressed() {
@@ -131,12 +148,16 @@ void mousePressed() {
     buttonStartPressed = true;
 }
 
+void movieEvent(Movie m) {
+  m.read();
+}
+
 void drawRectangle(int random, boolean showtext) {
   int r = random % n;//reminder 
   int q = (int)(random / n);//quocient
   if (r == 0) {
     ox = (n-1)*a;
-    oy = (q-1)*a;    
+    oy = (q-1)*a;
   } else {
     if (random > n) {
       ox = (r-1)*a;
@@ -146,9 +167,9 @@ void drawRectangle(int random, boolean showtext) {
       oy = 0;
     }
   }
-  fill(0,fade);
+  fill(0, fade);
   noStroke();
-  rect(ox, oy, a, a);
+  rect(offsetX+ox, offsetY+oy, a, a);
   fill(255);
-  if(showtext) text(random, ox+0, oy+15);
+  if (showtext) text(random, ox+0, oy+15);
 }
