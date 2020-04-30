@@ -16,7 +16,6 @@ int nn = n*n;
 Integer[] randoms = new Integer[nn];
 int[] eyeRects = { 234, 235, 259, 260, 261 };//Eyes squares defined by hand: 
 int counter = 0;
-int mediaCounter = 0;
 int fade = 0;
 boolean buttonStartPressed;
 int buttonX, buttonY, buttonW, buttonH;
@@ -32,6 +31,10 @@ float oxvideo = 300;//ox video
 float oyvideo = 600;//oy video
 float widthVideo = 784;//width video
 float heightVideo = 112;//height video
+
+int endDelay = 5000;
+
+boolean showVideo = true;
 
 void setup() {
 
@@ -49,9 +52,7 @@ void setup() {
   buttonX = (width-buttonW)/2;
   buttonY = (height-buttonH)/2;
 
-  // Generate random array numbers for positioning small black squares:
-  for (int i = 1; i <= randoms.length; i++) randoms[i-1] = i;
-  Collections.shuffle(Arrays.asList(randoms));
+
 
   //Load movie: 
   videoFileLoaded = false; 
@@ -85,9 +86,11 @@ void draw() {
         
       } else { //Fade-in photo already finished
       
-        //Play and locate video:
-        videoSubtitles.play();
-        image(videoSubtitles, oxvideo, oyvideo, widthVideo, heightVideo);
+        if(showVideo == true){
+          //Play and locate video:
+          videoSubtitles.play();
+          image(videoSubtitles, oxvideo, oyvideo, widthVideo, heightVideo);
+        }
 
         //Show small black rectangles: 
         if (fade <= 40) {
@@ -100,14 +103,25 @@ void draw() {
         } else {
           fade = 0;
           counter++;
-          if (counter == nn) noLoop();
+          if (counter == nn) {
+            buttonStartPressed = false;
+            photoFadeinLoaded = false;
+            counter = 0;
+            fade = 0;
+            delay(endDelay);
+          }
         }//end small rectangles
 
       }
       
     } else {//Start button not yet pressed
+    
+      // Generate random array numbers for positioning small black squares:
+      for (int i = 1; i <= randoms.length; i++) randoms[i-1] = i;
+      Collections.shuffle(Arrays.asList(randoms));
 
       // Intro text: 
+      background(100);
       String s = "This project bla bla bla...";
       fill(50);
       textSize(10); 
@@ -123,7 +137,9 @@ void draw() {
 }//end draw
 
 void loadMovieFile() {
-  videoSubtitles = new Movie(this, videoName);
+  if(showVideo == true){
+    videoSubtitles = new Movie(this, videoName);
+  }
   videoFileLoaded = true;
 }
 
