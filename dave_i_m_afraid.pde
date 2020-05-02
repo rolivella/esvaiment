@@ -1,5 +1,7 @@
 import java.util.Arrays; //<>//
 import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 import processing.video.*;
 
 Movie videoSubtitles;
@@ -14,8 +16,10 @@ float a = w / n;//side of a shading square
 int R = 0;
 int nn = n*n;
 Integer[] randoms = new Integer[nn];
-int[] eyeRects = { 234, 235, 259, 260, 261 };//Eyes squares defined by hand: 
+Integer[] randomsWoEyes;
+int[] eyeSquares = { 234, 235, 259, 260 };//Eyes squares defined by hand 
 int counter = 0;
+int counterEye = 0;
 int fade = 0;
 boolean buttonStartPressed;
 int buttonX, buttonY, buttonW, buttonH;
@@ -23,7 +27,7 @@ boolean photoLoaded;
 boolean photoFadeinLoaded;
 boolean videoFileLoaded;
 String videoName = "dave_i_m_afraid.mp4";
-String photoName = "photo/oldman.jpg";
+String photoName = "oldman.jpg";
 
 float offsetX = 450;//ox photo
 float offsetY = 50;//oy photo
@@ -33,13 +37,18 @@ float widthVideo = 784;//width video
 float heightVideo = 112;//height video
 
 int endDelay = 5000;
+int frameRate = 100;
 
-boolean showVideo = true;
+boolean showVideo = false;//video length: 3min 56 sec = 236 sec
+int smallSquaresFadeSpeed = 27;//27->240 sec
+boolean showNumInSquare = false;
+int fadeColor = 0;
+int fadeEyeColor = 0;
 
 void setup() {
 
   // General variables:
-  frameRate(500);
+  frameRate(frameRate);
   fullScreen();
 
   // Assume start button has not been pressed
@@ -51,8 +60,6 @@ void setup() {
   textSize(buttonH);
   buttonX = (width-buttonW)/2;
   buttonY = (height-buttonH)/2;
-
-
 
   //Load movie: 
   videoFileLoaded = false; 
@@ -93,12 +100,14 @@ void draw() {
         }
 
         //Show small black rectangles: 
-        if (fade <= 40) {
-          boolean isEye = false;
-          for (int i = 0; i < eyeRects.length; i++) {
-            if (randoms[counter] == eyeRects[i]) isEye= true;
+        if (fade <= smallSquaresFadeSpeed) {
+          
+          if(counter < randomsWoEyes.length){
+            drawRectangle(randomsWoEyes[counter], showNumInSquare, fadeColor);
+          } else {
+            drawRectangle(eyeSquares[counterEye], showNumInSquare, fadeColor);
           }
-          if (!isEye) drawRectangle(randoms[counter], false);
+          
           fade ++;
         } else {
           fade = 0;
@@ -107,9 +116,12 @@ void draw() {
             buttonStartPressed = false;
             photoFadeinLoaded = false;
             counter = 0;
+            counterEye = 0;
             fade = 0;
             delay(endDelay);
-          }
+            println("End sec: "+millis()/1000);
+          } 
+          if(counter > randomsWoEyes.length) counterEye++;
         }//end small rectangles
 
       }
@@ -119,6 +131,24 @@ void draw() {
       // Generate random array numbers for positioning small black squares:
       for (int i = 1; i <= randoms.length; i++) randoms[i-1] = i;
       Collections.shuffle(Arrays.asList(randoms));
+      shuffleArray(eyeSquares);
+      int randomsSize = randoms.length;
+      int eyesSize = eyeSquares.length;
+      int randomOKSize = randomsSize - eyesSize;
+      int k = 0;
+      randomsWoEyes = new Integer[randomOKSize];
+      for (int i = 0; i < randomsSize; i++) {
+        boolean isEye = false;
+        for (int j = 0; j < eyesSize; j++) {
+          if(randoms[i] == eyeSquares[j]){
+            isEye = true;
+          }
+        }
+        if(!isEye) {
+          randomsWoEyes[k]=randoms[i];
+          k++;
+        }
+      }
 
       // Intro text: 
       background(100);
@@ -148,12 +178,13 @@ void loadPhotoFile() {
   photoLoaded = true;
 }
 
-void fadeIn() {//Fade-in photo   
+void fadeIn() {//Fade-in photo 
   background(0);
   if (transparency < 255) { 
     transparency += 10; //0.75
   } else {
     photoFadeinLoaded = true;
+    println("Start sec: "+millis()/1000);
   }
   tint(255, transparency);
   image(img, offsetX, offsetY);
@@ -168,7 +199,22 @@ void movieEvent(Movie m) {
   m.read();
 }
 
-void drawRectangle(int random, boolean showtext) {
+ // Implementing Fisher–Yates shuffle
+void shuffleArray(int[] ar)
+{
+  // If running on Java 6 or older, use `new Random()` on RHS here
+  Random rnd = ThreadLocalRandom.current();
+  for (int i = ar.length - 1; i > 0; i--)
+  {
+    int index = rnd.nextInt(i + 1);
+    // Simple swap
+    int a = ar[index];
+    ar[index] = ar[i];
+    ar[i] = a;
+  }
+}
+
+void drawRectangle(int random, boolean showtext, int fadeColorSet) {
   int r = random % n;//reminder 
   int q = (int)(random / n);//quocient
   if (r == 0) {
@@ -182,10 +228,13 @@ void drawRectangle(int random, boolean showtext) {
       ox = (r-1)*a;
       oy = 0;
     }
-  }
-  fill(0, fade);
-  noStroke();
+  } 
+  fill(fadeColorSet, map(fade,0,smallSquaresFadeSpeed,0,255));
+  stroke(fadeColorSet, map(fade,0,smallSquaresFadeSpeed,0,255));
   rect(offsetX+ox, offsetY+oy, a, a);
-  fill(255);
-  if (showtext) text(random, ox+0, oy+15);
+  if (showtext) {
+    fill(255);
+    textSize(10); 
+    text(random, offsetX+ox+0, offsetY+oy+15);
+  }
 }
