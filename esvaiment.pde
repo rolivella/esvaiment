@@ -1,65 +1,74 @@
 import java.util.concurrent.ThreadLocalRandom; //<>//
 import java.util.*;
 import processing.video.*;
+PFont fontLoading, fontIntro, fontsubIntro;
 
 //Declrataions:
 Movie videoSubtitles;
-PImage img;//Photo must be squared 512x512
+PImage img;//Photo must be 512x512
 Integer[] randomsWoEyes;
 boolean buttonStartPressed,photoLoaded,photofadeInPhotoLoaded,videoFileLoaded;
  
 // Text: 
 // Catalan: 
-String introText = "This project bla bla bla...";
 String loadingText = "Carregant...";
-String startButtonText = "Comença";
+String introText = "ESVAÏMENT";
+String subintroText = "per Roger Olivella";
+String startButtonText = "";
 
 // Loading text constants: 
-int loadingTextX = 200;
-int loadingTextY = 200;
-int loadingTextColor = 0;
-int loadingTextSize = 14;
+float loadingTextX, loadingTextY;
+int loadingTextBackgroundColor = 0;
+int loadingTextColor = 255;
+int loadingTextSize = 54;
 
 // Intro text constants: 
-int introTextBaclgroundColor = 100;
-int introTextFillColor = 50;
-int introTextSize = 10;
-int introTextX = 100;
-int introTextY = 50;
-int introTextW = 200;
+int introTextBackgroundColor = 0;
+int introTextFillColor = 255;
+int introTextSize = 64;
+float introTextX, introTextY;
+int introTextW = 500;
 int introTextH = 200;
+//Subtitle: 
+int subintroTextBackgroundColor = 0;
+int subintroTextFillColor = 255;
+int subintroTextSize = 34;
+float subintroTextX, subintroTextY;
+int subintroTextW = 500;
+int subintroTextH = 200;
 
 // Start button constants: 
-int startButtonX = 100;
-int startButtonY = 100;      
+float startButtonX, startButtonY;      
 int startButtonSize = 90;     
 color startButtonBaseColor = color(0);
-color startButtonHoverColor = color(51);
+color startButtonHoverColor = color(255);
 boolean isStartButtonHovered = false;
 int startButtonStroke = 255;
 int startButtonFill = 255;
 
 // Photo constants: 
+int photosize = 512;
 String photoName = "oldman.jpg";
 float startTransparencyColor = 0;//photo transparency start color
 float endTransparencyColor = 255;//photo transparency end color
 float speedTransparency = 10;//0.75
-float offsetX = 450;//ox photo
-float offsetY = 50;//oy photo
+float oxphoto, oyphoto;
 
 // Video constants: 
-String videoName = "dave_i_m_afraid.mp4";
-float oxvideo = 300;//ox video
-float oyvideo = 600;//oy video
-float widthVideo = 784;//width video
-float heightVideo = 112;//height video
+//String videoName = "dave_i_m_afraid.mp4";
+String videoName = "esvaiment_subtitols_crop_C.mp4";
+float oxvideo, oyvideo;
+//float widthVideo = 784;//width video
+//float heightVideo = 112;//height video
+float widthVideo = 640;//width video
+float heightVideo = 81;//height video
 boolean showVideo = true;//video length: 3min 56 sec = 236 sec
 
 // Small squares constants: 
 int[] eyeSquares = { 234, 235, 259, 260 };//Eyes squares defined by hand 
-int smallSquaresFadeSpeed = 1;//27->240 sec aprox.
+int smallSquaresFadeSpeed = 21;//21->237 sec aprox. (less, faster)
 int n = 25;
-float w = 512;
+float w = photosize;
 float ox = 0;
 float oy = 0;
 int R = 0;
@@ -75,13 +84,32 @@ int fadeEyeColor = 0;
 
 // Other constants: 
 int endDelay = 5000;
-int frameRate = 100;
+int frameRate = 60;
 
 void setup() {
-  
+   
   // General variables:
   frameRate(frameRate);
   fullScreen();
+  
+  //Load fonts: 
+  fontLoading = createFont("microgramma.ttf", loadingTextSize); 
+  fontIntro = createFont("microgramma.ttf", introTextSize); 
+  fontsubIntro = createFont("microgramma.ttf", introTextSize);
+    
+  //Auto-position: 
+  oxphoto = (displayWidth-photosize)/2;
+  oyphoto = ((displayHeight-photosize)/2)*0.6;
+  oxvideo = oxphoto-oxphoto*0.1;
+  oyvideo = oyphoto+1.01*photosize; 
+  loadingTextX = oxphoto*1.05;
+  loadingTextY = oyphoto*4; 
+  introTextX = oxphoto;
+  introTextY = oyphoto;
+  subintroTextX = oxphoto*1.1;
+  subintroTextY = oyphoto*1.55;
+  startButtonX = subintroTextX*1.14;
+  startButtonY = subintroTextY*1.55;
 
   // Assume start button has not been pressed
   buttonStartPressed = false;
@@ -98,12 +126,15 @@ void setup() {
 }
 
 void draw() {
+  
+  //videoFileLoaded = false;
 
   if (!videoFileLoaded) {//Video file loading not yet finished
 
     // "Loading" text: 
+    background(loadingTextBackgroundColor);
+    textFont(fontLoading, loadingTextSize);
     fill(loadingTextColor);
-    textSize(loadingTextSize);
     text(loadingText, loadingTextX, loadingTextY);
     
   } else {//Video file loading already finished
@@ -172,10 +203,13 @@ void draw() {
       }
 
       // Intro text: 
-      background(introTextBaclgroundColor);
+      background(introTextBackgroundColor);
+      textFont(fontIntro, introTextSize);
       fill(introTextFillColor);
-      textSize(introTextSize); 
       text(introText, introTextX, introTextY, introTextW, introTextH);//Text wraps within text box
+      textFont(fontsubIntro, subintroTextSize);
+      fill(subintroTextFillColor);
+      text(subintroText, subintroTextX, subintroTextY, subintroTextW, subintroTextH);//Text wraps within text box
 
       //Start button hover system: 
       updateStartButton(mouseX, mouseY);
@@ -201,7 +235,7 @@ void updateStartButton(int x, int y) {
   }
 }
 
-boolean overStartButton(int x, int y, int width, int height) {
+boolean overStartButton(float x, float y, int width, int height) {
   if (mouseX >= x && mouseX <= x+width && 
     mouseY >= y && mouseY <= y+height) {
     return true;
@@ -231,7 +265,7 @@ void fadeInPhoto() {//Fade-in photo
     //println("Start sec: "+millis()/1000);
   }
   tint(255, startTransparencyColor);
-  image(img, offsetX, offsetY);
+  image(img, oxphoto, oyphoto);
 }
 
 void mousePressed() {
@@ -276,10 +310,10 @@ void drawRandomSquare(int random, boolean showtext, int fadeColorSet) {
   } 
   fill(fadeColorSet, map(fade, 0, smallSquaresFadeSpeed, 0, 255));
   stroke(fadeColorSet, map(fade, 0, smallSquaresFadeSpeed, 0, 255));
-  rect(offsetX+ox, offsetY+oy, a, a);
+  rect(oxphoto+ox, oyphoto+oy, a, a);
   if (showtext) {
     fill(255);
     textSize(10); 
-    text(random, offsetX+ox+0, offsetY+oy+15);
+    text(random, oxphoto+ox+0, oyphoto+oy+15);
   }
 }
