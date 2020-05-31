@@ -48,15 +48,14 @@ int startButtonFill = 255;
 
 // Photo constants: 
 int photosize = 512;
-String photoName = "oldman.jpg";
+String photoName = "data/oldman.jpg";
 float startTransparencyColor = 0;//photo transparency start color
 float endTransparencyColor = 255;//photo transparency end color
 float speedTransparency = 10;//0.75
 float oxphoto, oyphoto;
 
 // Video constants: 
-//String videoName = "dave_i_m_afraid.mp4";
-String videoName = "esvaiment_subtitols_crop_C.mp4";
+String videoName = "hal.mp4";
 float oxvideo, oyvideo;
 //float widthVideo = 784;//width video
 //float heightVideo = 112;//height video
