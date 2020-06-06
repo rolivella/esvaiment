@@ -8,6 +8,9 @@ Movie videoSubtitles;
 PImage img;//Photo must be 512x512
 Integer[] randomsWoEyes;
 boolean buttonStartPressed,photoLoaded,photofadeInPhotoLoaded,videoFileLoaded;
+int currTime, prevTime;  // milliseconds
+float elapsedTime;       // seconds
+int firstRandomWoEyes;
  
 // Text: 
 // Catalan: 
@@ -51,7 +54,7 @@ int photosize = 512;
 String photoName = "data/oldman.jpg";
 float startTransparencyColor = 0;//photo transparency start color
 float endTransparencyColor = 255;//photo transparency end color
-float speedTransparency = 10;//0.75
+float speedTransparency = 10;
 float oxphoto, oyphoto;
 
 // Video constants: 
@@ -65,7 +68,8 @@ boolean showVideo = true;//video length: 3min 56 sec = 236 sec
 
 // Small squares constants: 
 int[] eyeSquares = { 234, 235, 259, 260 };//Eyes squares defined by hand 
-int smallSquaresFadeSpeed = 21;//21->237 sec aprox. (less, faster)
+float squaresFadeTime = 0.37;
+float cumEllapsedTime = 0;
 int n = 25;
 float w = photosize;
 float ox = 0;
@@ -73,6 +77,7 @@ float oy = 0;
 int R = 0;
 int counter = 0;
 int counterEye = 0;
+int counterPrevtime =0;
 int fade = 0;
 float a = w / n;//side of a shading square
 int nn = n*n;
@@ -80,6 +85,7 @@ Integer[] randoms = new Integer[nn];
 boolean showNumInSquare = false;
 int fadeColor = 0;
 int fadeEyeColor = 0;
+boolean isDrawingSquares = false;
 
 // Other constants: 
 int endDelay = 5000;
@@ -121,12 +127,10 @@ void setup() {
   photoLoaded = false;  
   photofadeInPhotoLoaded = false;
   thread("loadPhotoFile");//diff thread to do not freeze program
-  
+    
 }
 
 void draw() {
-  
-  //videoFileLoaded = false;
 
   if (!videoFileLoaded) {//Video file loading not yet finished
 
@@ -136,49 +140,70 @@ void draw() {
     fill(loadingTextColor);
     text(loadingText, loadingTextX, loadingTextY);
     
+    //thread("loadMovieFile");//diff thread to do not freeze program
+    
   } else {//Video file loading already finished
 
     if (buttonStartPressed) {//Start button already pressed
-
+      isDrawingSquares = true;
+      isStartButtonHovered = false;
+      noCursor();
+          
       if (!photofadeInPhotoLoaded) {//Fade-in photo not finished
 
         fadeInPhoto();//photo fade-in
-        
+                
       } else { //Fade-in photo already finished
-
+      
         if (showVideo == true) {
           //Play and locate video:
           videoSubtitles.play();
           image(videoSubtitles, oxvideo, oyvideo, widthVideo, heightVideo);
+          if(counterPrevtime==0) prevTime = millis();
+          counterPrevtime++;
         }
-
-        //Show small black rectangles: 
-        if (fade <= smallSquaresFadeSpeed) {
-
-          if (counter < randomsWoEyes.length) {
+    
+        //Show small black squares: 
+        
+        if (cumEllapsedTime <= squaresFadeTime) { //<>//
+          if (counter < randomsWoEyes.length) { //<>//
             drawRandomSquare(randomsWoEyes[counter], showNumInSquare, fadeColor);
           } else {
             drawRandomSquare(eyeSquares[counterEye], showNumInSquare, fadeColor);
           }
 
           fade ++;
+          currTime = millis();;
+          elapsedTime = (currTime - prevTime) / 1000.0;
+          cumEllapsedTime = cumEllapsedTime + elapsedTime;
+          prevTime = currTime;  // set it up for the next frame
+          
         } else {
           fade = 0;
+          cumEllapsedTime = 0;
           counter++;
           if (counter == nn) {
+            isDrawingSquares = false;
+            videoSubtitles.stop();
             buttonStartPressed = false;
             photofadeInPhotoLoaded = false;
+            photoLoaded = false;
+            //videoFileLoaded = false;
+            startTransparencyColor = 0;
             counter = 0;
             counterEye = 0;
+            counterPrevtime = 0;
             fade = 0;
             delay(endDelay);
-            //println("End sec: "+millis()/1000);
+            buttonStartPressed = false;
+            cursor();
           } 
           if (counter > randomsWoEyes.length) counterEye++;
+
         }//end small rectangles
       }
     } else {//Start button not yet pressed
-
+    
       // Generate random array numbers for positioning small black squares:
       for (int i = 1; i <= randoms.length; i++) randoms[i-1] = i;
       Collections.shuffle(Arrays.asList(randoms));
@@ -200,6 +225,7 @@ void draw() {
           k++;
         }
       }
+      firstRandomWoEyes=randomsWoEyes[0];
 
       // Intro text: 
       background(introTextBackgroundColor);
@@ -211,7 +237,7 @@ void draw() {
       text(subintroText, subintroTextX, subintroTextY, subintroTextW, subintroTextH);//Text wraps within text box
 
       //Start button hover system: 
-      updateStartButton(mouseX, mouseY);
+      updateStartButton();
       if (isStartButtonHovered) {
         fill(startButtonHoverColor);
       } else {
@@ -226,7 +252,7 @@ void draw() {
   }
 }//end draw
 
-void updateStartButton(int x, int y) {
+void updateStartButton() {
   if ( overStartButton(startButtonX, startButtonY, startButtonSize, startButtonSize) ) {
     isStartButtonHovered = true;
   } else {
@@ -261,15 +287,18 @@ void fadeInPhoto() {//Fade-in photo
     startTransparencyColor += speedTransparency; 
   } else {
     photofadeInPhotoLoaded = true;
-    //println("Start sec: "+millis()/1000);
   }
   tint(255, startTransparencyColor);
   image(img, oxphoto, oyphoto);
 }
 
 void mousePressed() {
-  if (isStartButtonHovered) {
-    buttonStartPressed = true;
+  if(!isDrawingSquares){
+    if (isStartButtonHovered) {
+      buttonStartPressed = true;
+    } else {
+      buttonStartPressed = false;
+    }
   }
 }
 
@@ -307,8 +336,8 @@ void drawRandomSquare(int random, boolean showtext, int fadeColorSet) {
       oy = 0;
     }
   } 
-  fill(fadeColorSet, map(fade, 0, smallSquaresFadeSpeed, 0, 255));
-  stroke(fadeColorSet, map(fade, 0, smallSquaresFadeSpeed, 0, 255));
+  fill(fadeColorSet, map(fade, 0, squaresFadeTime, 0, 255));
+  stroke(fadeColorSet, map(fade, 0, squaresFadeTime, 0, 255));
   rect(oxphoto+ox, oyphoto+oy, a, a);
   if (showtext) {
     fill(255);
