@@ -1,7 +1,7 @@
 import java.util.concurrent.ThreadLocalRandom; //<>//
 import java.util.*;
 import processing.video.*;
-PFont fontLoading, fontIntro, fontsubIntro;
+PFont fontLoading, fontIntro, fontsubIntro, fontSummary;
 
 //Declrataions:
 Movie videoSubtitles;
@@ -17,7 +17,8 @@ int firstRandomWoEyes;
 String loadingText = "Carregant...";
 String introText = "ESVAÏMENT";
 String subintroText = "per Roger Olivella";
-String startButtonText = "";
+String summaryText = "Poc abans de morir, el pare em va dir: \"aquesta enfermetat \nés com quan apaguen HAL a 2001...sento que me'n vaig lentament\".";
+String startButtonText = "Clic";
 
 // Loading text constants: 
 float loadingTextX, loadingTextY;
@@ -30,6 +31,7 @@ int introTextBackgroundColor = 0;
 int introTextFillColor = 255;
 int introTextSize = 64;
 float introTextX, introTextY;
+float summaryTextX, summaryTextY;
 int introTextW = 500;
 int introTextH = 200;
 //Subtitle: 
@@ -48,10 +50,11 @@ color startButtonHoverColor = color(255);
 boolean isStartButtonHovered = false;
 int startButtonStroke = 255;
 int startButtonFill = 255;
+int startButtonTextSize = 17;
 
 // Photo constants: 
 int photosize = 512;
-String photoName = "data/oldman.jpg";
+String photoName = "data/pare.png";
 float startTransparencyColor = 0;//photo transparency start color
 float endTransparencyColor = 255;//photo transparency end color
 float speedTransparency = 10;
@@ -67,7 +70,8 @@ float heightVideo = 81;//height video
 boolean showVideo = true;//video length: 3min 56 sec = 236 sec
 
 // Small squares constants: 
-int[] eyeSquares = { 234, 235, 259, 260 };//Eyes squares defined by hand 
+boolean showNumInSquare = false;
+int[] eyeSquares = { 284, 285, 309, 310, 290, 291, 315, 316 };//Eyes squares defined by hand 
 float squaresFadeTime = 0.37;
 float cumEllapsedTime = 0;
 int n = 25;
@@ -82,7 +86,6 @@ int fade = 0;
 float a = w / n;//side of a shading square
 int nn = n*n;
 Integer[] randoms = new Integer[nn];
-boolean showNumInSquare = false;
 int fadeColor = 0;
 int fadeEyeColor = 0;
 boolean isDrawingSquares = false;
@@ -101,20 +104,26 @@ void setup() {
   fontLoading = createFont("microgramma.ttf", loadingTextSize); 
   fontIntro = createFont("microgramma.ttf", introTextSize); 
   fontsubIntro = createFont("microgramma.ttf", introTextSize);
-    
+  fontSummary = createFont("microgramma.ttf", introTextSize); 
+      
   //Auto-position: 
+  //Photo and video: 
   oxphoto = (displayWidth-photosize)/2;
   oyphoto = ((displayHeight-photosize)/2)*0.6;
   oxvideo = oxphoto-oxphoto*0.1;
   oyvideo = oyphoto+1.01*photosize; 
-  loadingTextX = oxphoto*1.05;
-  loadingTextY = oyphoto*4; 
-  introTextX = oxphoto;
-  introTextY = oyphoto;
-  subintroTextX = oxphoto*1.1;
-  subintroTextY = oyphoto*1.55;
-  startButtonX = subintroTextX*1.14;
-  startButtonY = subintroTextY*1.55;
+  //Loading text: 
+  loadingTextX = displayWidth/2;
+  loadingTextY = displayHeight/2; 
+  //Main menu: 
+  introTextX = displayWidth/2;
+  introTextY = displayHeight/6;
+  subintroTextX = displayWidth/2;
+  subintroTextY = displayHeight/4;
+  startButtonX = subintroTextX-startButtonSize/2;
+  startButtonY = subintroTextY*1.3;
+  summaryTextX = displayWidth/2;
+  summaryTextY = startButtonY*1.5;
 
   // Assume start button has not been pressed
   buttonStartPressed = false;
@@ -138,6 +147,7 @@ void draw() {
     background(loadingTextBackgroundColor);
     textFont(fontLoading, loadingTextSize);
     fill(loadingTextColor);
+    textAlign(CENTER);
     text(loadingText, loadingTextX, loadingTextY);
     
     //thread("loadMovieFile");//diff thread to do not freeze program
@@ -231,10 +241,15 @@ void draw() {
       background(introTextBackgroundColor);
       textFont(fontIntro, introTextSize);
       fill(introTextFillColor);
-      text(introText, introTextX, introTextY, introTextW, introTextH);//Text wraps within text box
+      textAlign(CENTER);
+      text(introText, introTextX, introTextY);
       textFont(fontsubIntro, subintroTextSize);
       fill(subintroTextFillColor);
-      text(subintroText, subintroTextX, subintroTextY, subintroTextW, subintroTextH);//Text wraps within text box
+      text(subintroText, subintroTextX, subintroTextY);
+      textFont(fontSummary, subintroTextSize);
+      fill(subintroTextFillColor);
+      textAlign(CENTER);
+      text(summaryText, summaryTextX, summaryTextY);
 
       //Start button hover system: 
       updateStartButton();
@@ -246,7 +261,8 @@ void draw() {
       stroke(startButtonStroke);
       rect(startButtonX, startButtonY, startButtonSize, startButtonSize);
       fill(startButtonFill);
-      text(startButtonText, startButtonX+10, startButtonY+10);
+      textSize(startButtonTextSize);
+      text(startButtonText, startButtonX+45, startButtonY+70);
 
     }
   }
@@ -302,6 +318,11 @@ void mousePressed() {
   }
 }
 
+void keyPressed()
+{
+ if(key == 27) key = 0;
+}
+
 void movieEvent(Movie m) {
   m.read();
 }
@@ -341,7 +362,7 @@ void drawRandomSquare(int random, boolean showtext, int fadeColorSet) {
   rect(oxphoto+ox, oyphoto+oy, a, a);
   if (showtext) {
     fill(255);
-    textSize(10); 
-    text(random, oxphoto+ox+0, oyphoto+oy+15);
+    textSize(8); 
+    text(random, oxphoto+ox+10, oyphoto+oy+15);
   }
 }
