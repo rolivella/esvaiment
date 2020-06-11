@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <headerType>gui</headerType>
+  <dontWrapJar>true</dontWrapJar>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <outfile>/data/myprograms/sketchbook/esvaiment/application.windows32/esvaiment.exe</outfile>
+  <icon>/data/myprograms/processing-3.5.4/modes/java/application/sketch.ico</icon>
+  <classPath>
+    <mainClass>esvaiment</mainClass>
+    <cp>lib/esvaiment.jar</cp>
+    <cp>lib/core.jar</cp>
+    <cp>lib/jogl-all.jar</cp>
+    <cp>lib/gluegen-rt.jar</cp>
+    <cp>lib/jogl-all-natives-windows-i586.jar</cp>
+    <cp>lib/gluegen-rt-natives-windows-i586.jar</cp>
+    <cp>lib/video.jar</cp>
+    <cp>lib/gst1-java-core-0.9.1.jar</cp>
+    <cp>lib/jna.jar</cp>
+  </classPath>
+  <jre>
+    <minVersion>1.8.0_74</minVersion>
+    <opt>-Djna.nosys=true</opt>
+    <opt>-Djava.library.path="%EXEDIR%\lib"</opt>
+  </jre>
+</launch4jConfig>

@@ -41,6 +41,7 @@ int subintroTextSize = 34;
 float subintroTextX, subintroTextY;
 int subintroTextW = 500;
 int subintroTextH = 200;
+int summaryTextSize = 24;
 
 // Start button constants: 
 float startButtonX, startButtonY;      
@@ -249,6 +250,7 @@ void draw() {
       textFont(fontSummary, subintroTextSize);
       fill(subintroTextFillColor);
       textAlign(CENTER);
+      textFont(fontsubIntro, summaryTextSize);
       text(summaryText, summaryTextX, summaryTextY);
 
       //Start button hover system: 
@@ -320,7 +322,11 @@ void mousePressed() {
 
 void keyPressed()
 {
- if(key == 27) key = 0;
+ if(key == 27 && isDrawingSquares) {
+  exit();
+ } else {
+  key = 0;
+ }
 }
 
 void movieEvent(Movie m) {
