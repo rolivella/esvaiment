@@ -8,7 +8,7 @@ Movie videoSubtitles;
 PImage img;//Photo must be 512x512
 Integer[] randomsWoEyes;
 boolean buttonStartPressed,photoLoaded,photofadeInPhotoLoaded,videoFileLoaded;
-int currTime, prevTime;  // milliseconds
+int currTime, prevTime;  // millisec
 float elapsedTime;       // seconds
 int firstRandomWoEyes;
  
