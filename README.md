@@ -1,5 +1,11 @@
 # Esvaïment - Desvanecimiento - Vanishment
 
+## Instal·lació - Instalación - Installation 
+
+Dowload, unzip and click on: 
+
+Per visualitzar el treball baixi aquest arxiu, descomprimeixi'l i faci doble click sobre esvaiment.exe.
+
 ## Català
 
 Vídeo generatiu i introspectiu que explica metafòricament de la malaltia que es va emportar el meu pare el juliol de 2019. Cada quadradet es correspon amb un dels 700 muscles que té el cos. L'Esclerosi Lateral Amiotròfica va desconnectant progressivament i a l'atzar tots els muscles fins a deixar només el moviment dels ulls. Poc abans de morir, el pare em va dir: 'aquesta malaltia és semblant a la desconnexió de HAL a 2001...sento que me'n vaig lentament".
@@ -16,7 +22,7 @@ Una muestra del resultado se puede ver en: https://vimeo.com/431055585
 
 Generative and introspective video metaphorically explaining the disease that my father took in July 2019. Each square corresponds to one of the 700 muscles that the body has. Amyotrophic Lateral Sclerosis gradually and randomly disconnects all the muscles until only the movement of the eyes is left. Shortly before he died, my father told me: "this disease is like when HAL is switched off in 2001...I feel like I'm leaving slowly". 
 
-https://vimeo.com/431056719
+A sample can be seen at: https://vimeo.com/431056719
 
 ## Credits
 
