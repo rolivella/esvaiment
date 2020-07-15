@@ -1,10 +1,10 @@
 # Esvaïment - Desvanecimiento - Vanishment
 
-## Instal·lació - Instalación - Installation 
+## Instal·lació - Instalación - Installation (only Windows) 
 
-Dowload, unzip and click on: 
-
-Per visualitzar el treball baixi aquest arxiu, descomprimeixi'l i faci doble click sobre esvaiment.exe.
+1) Baixeu / Bajar / Download http://www.bifur.cat/esvaiment.zip
+2) Descomprimiu / Descomprimid / Unzip "esvaiment.zip"
+3) Click "esvaiment.exe"
 
 ## Català
 
