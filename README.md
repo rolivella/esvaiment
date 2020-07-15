@@ -12,7 +12,7 @@ Vídeo generatiu i introspectiu que explica metafòricament de la malaltia que e
 
 Una mostra del resultat es pot veure a: https://vimeo.com/430308019
 
-Per donacions a la Fundació d'ELA Miquel Valls visiteu aquest víncle: fundaciomiquelvalls.org/forms/donacio
+Per donacions a la Fundació d'ELA Miquel Valls visiteu aquest víncle: http://fundaciomiquelvalls.org/forms/donacio
 
 ## Castellano 
 
@@ -20,7 +20,7 @@ Vídeo generativo e introspectivo que explica metafóricamente la enfermedad que
 
 Una muestra del resultado se puede ver en: https://vimeo.com/431055585
 
-Para donaciones a la Fundación ELA Miquel Valls visite este vínculo: fundaciomiquelvalls.org/forms/donacio
+Para donaciones a la Fundación ELA Miquel Valls visite este vínculo: http://fundaciomiquelvalls.org/forms/donacio
 
 ## English
 
