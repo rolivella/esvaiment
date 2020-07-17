@@ -24,7 +24,7 @@ Para donaciones a la Fundación ELA Miquel Valls visite este vínculo: http://fu
 
 ## English
 
-Generative and introspective video metaphorically explaining the disease that my father took in July 2019. Each square corresponds to one of the 700 muscles that the body has. Amyotrophic Lateral Sclerosis gradually and randomly disconnects all the muscles until only the movement of the eyes is left. Shortly before he died, my father told me: "this disease is like when HAL is switched off in 2001...I feel like I'm leaving slowly". 
+Generative and introspective video metaphorically explaining the disease that my father had in July 2019. Each square corresponds to one of the 700 muscles that the body has. Amyotrophic Lateral Sclerosis gradually and randomly disconnects all the muscles until only the movement of the eyes is left. Shortly before he died, my father told me: "this disease is like when HAL is switched off in 2001...I feel like I'm leaving slowly". 
 
 A sample can be seen at: https://vimeo.com/431056719
 
