@@ -8,7 +8,7 @@
 
 ## Català
 
-Vídeo generatiu i introspectiu que explica metafòricament de la malaltia que es va emportar el meu pare el juliol de 2019. Cada quadradet es correspon amb un dels 700 muscles que té el cos. L'Esclerosi Lateral Amiotròfica va desconnectant progressivament i a l'atzar tots els muscles fins a deixar només el moviment dels ulls. Poc abans de morir, el pare em va dir: 'aquesta malaltia és semblant a la desconnexió de HAL a 2001...sento que me'n vaig lentament".
+Vídeo generatiu i introspectiu que explica metafòricament la malaltia que es va endur el meu pare el juliol de 2019. Cada quadradet es correspon amb un dels 700 muscles que té el cos. L'Esclerosi Lateral Amiotròfica va desconnectant progressivament i a l'atzar tots els muscles fins a deixar només el moviment dels ulls. Poc abans de morir, el pare em va dir: 'aquesta malaltia és semblant a la desconnexió de HAL a 2001...sento que me'n vaig lentament".
 
 Una mostra del resultat es pot veure a: https://vimeo.com/430308019
 
