@@ -1,4 +1,4 @@
-# Esvaïment - Desvanecimiento - Vanishment
+# Esvaïment (Juny 2020)
 
 ## Instal·lació - Instalación - Installation (only Windows) 
 
