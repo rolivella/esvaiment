@@ -32,6 +32,6 @@ You can make a donation to ALS Miquel Valls Foundation by following this link: h
 
 ## Credits
 
-Roger Olivella (roger.olivella@gmail.com)
+(Roger Olivella)[http://bifur.cat]
 
 Audio: extracted from the film "2001: A Space Odyssey", 1968, Stanley Kubrick.
